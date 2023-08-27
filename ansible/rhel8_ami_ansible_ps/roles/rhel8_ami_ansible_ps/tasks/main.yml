@@ -1,0 +1,64 @@
+---
+- name: selinux to permissive
+  shell: setenforce Permissive
+
+- name: move proxy.sh
+  shell: mv /etc/profile.d/proxy.sh /home/ec2-user
+
+- name: Create sysadmin user account
+  user:
+    name: sysadmin
+    update_password: always
+    password: $6$0W4Wndec.lYN/B0m$f/XQZSGwyvMfgdj/eN1re8JzQd1./X/LoUMEdLJMb19ivNEYpuvG5ogygHZu6A6iH0F5oUONiNtd/1WFCUjEJ.
+    shell: /bin/bash
+    groups: wheel
+    create_home: yes
+  ignore_errors: true
+
+- name: Update ssh to allow sysadmin ssh
+  shell: |
+    cp /etc/ssh/sshd_config /etc/ssh/sshd_config.ORIG
+    sed -i -e 's|PasswordAuthentication no|PasswordAuthentication yes|g' /etc/ssh/sshd_config
+    systemctl reload sshd
+
+- name: unchattr resolv.conf
+  shell: chattr -i /etc/resolv.conf 
+
+- name: update dns
+  shell: nmcli con mod 'System eth0' ipv4.dns "8.8.8.8 10.100.0.2"
+
+- name: Reload NetworkManager
+  shell: systemctl restart NetworkManager 
+
+- name: Copy dnf.conf to client
+  copy: src=dnf.conf  dest=/etc/dnf mode=0644
+
+- name: redhat-rhui.repo to client
+  copy: src=redhat-rhui.repo  dest=/etc/yum.repos.d mode=0600
+
+- name: redhat-rhui-client-config.repo to client
+  copy: src=redhat-rhui-client-config.repo  dest=/etc/yum.repos.d mode=0600
+
+- name: dnf clean
+  shell: dnf clean all
+
+- name: install packages
+  package:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+  - vim
+  - git
+
+- name: Install AWS SSM
+  shell: |
+    dnf install -y https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/linux_amd64/amazon-ssm-agent.rpm 
+    systemctl enable amazon-ssm-agent 
+    systemctl start amazon-ssm-agent
+
+- name: selinux to enforcing
+  shell: setenforce Enforcing 
+
+- name: chattr resolv.conf
+  shell: chattr +i /etc/resolv.conf 
+

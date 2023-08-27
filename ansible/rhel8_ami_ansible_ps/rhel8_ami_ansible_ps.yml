@@ -1,0 +1,9 @@
+# rhel8_ami_ansible_ps ansible role to configure shared ami-06ffd64772897d8b0 (RHEL8-LVM-STIG-06282023-NB-AMI) for PreStaging Christopher Sargent 08262023
+---
+  - name: rhel8_ami_ansible_ps
+    hosts: all
+    gather_facts: no
+    become_user: root
+    tasks:
+      - include_role:
+          name: rhel8_ami_ansible_ps
