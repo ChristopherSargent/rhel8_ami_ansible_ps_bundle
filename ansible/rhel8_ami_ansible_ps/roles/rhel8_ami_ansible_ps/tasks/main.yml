@@ -33,10 +33,10 @@
 - name: Copy dnf.conf to client
   copy: src=dnf.conf  dest=/etc/dnf mode=0644
 
-- name: redhat-rhui.repo to client
+- name: Copy redhat-rhui.repo to client
   copy: src=redhat-rhui.repo  dest=/etc/yum.repos.d mode=0600
 
-- name: redhat-rhui-client-config.repo to client
+- name: Copy redhat-rhui-client-config.repo to client
   copy: src=redhat-rhui-client-config.repo  dest=/etc/yum.repos.d mode=0600
 
 - name: dnf clean
@@ -50,8 +50,12 @@
   - vim
   - git
 
+- name: Copy amazon-ssm-agent.gpg to client
+  copy: src=amazon-ssm-agent.gpg  dest=/etc/pki/rpm-gpg mode=0644
+
 - name: Install AWS SSM
   shell: |
+    rpm --import /etc/pki/rpm-gpg/amazon-ssm-agent.gpg
     dnf install -y https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/linux_amd64/amazon-ssm-agent.rpm 
     systemctl enable amazon-ssm-agent 
     systemctl start amazon-ssm-agent
