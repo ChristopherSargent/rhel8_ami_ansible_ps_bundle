@@ -18,6 +18,10 @@
     create_home: yes
   ignore_errors: true
 
+# Set no password expiration for sysadmin
+- name: Set no password expiration for sysadmin
+  shell: chage -M -1 sysadmin
+
 # Update sshd to allow sysadmin ssh access
 - name: Update ssh to allow sysadmin ssh
   shell: |
