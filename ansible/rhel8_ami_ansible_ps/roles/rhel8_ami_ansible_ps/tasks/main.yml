@@ -72,10 +72,10 @@
 - name: Remove AIDE
   shell: dnf remove aide -y
 
-- name: Copy redhat-rhui-client-config.repo to client
+- name: Copy scripts directory
   copy: src=scripts/  dest=/root/scripts/ mode=0600
 
-- name: selinux to enforcing
+- name: Run run_scripts.sh
   shell: |
     chmod +x /root/scripts/run_scripts.sh
     chmod +x /root/scripts/bash_remediate_scripts/*

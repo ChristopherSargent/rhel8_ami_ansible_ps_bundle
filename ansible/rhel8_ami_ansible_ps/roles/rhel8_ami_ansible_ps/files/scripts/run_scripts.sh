@@ -3,6 +3,8 @@ set -e
 
 # that all scripts have "set -e" at the top of the bash file!
 # Fix AIDE
+cd /var/lib/aide/ && rm -rf * && \
+cp /etc/aide.conf /etc/aide.conf.ORIG && \
 bash_remediate_scripts/xccdf_org.ssgproject.content_rule_aide_build_database.sh && \
 bash_remediate_scripts/xccdf_org.ssgproject.content_rule_aide_check_audit_tools.sh && \
 bash_remediate_scripts/xccdf_org.ssgproject.content_rule_aide_verify_acls.sh && \
