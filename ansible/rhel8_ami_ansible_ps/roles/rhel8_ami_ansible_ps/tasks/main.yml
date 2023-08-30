@@ -69,8 +69,12 @@
     dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
     dnf install htop -y
 
-- name: Remove AIDE
-  shell: dnf remove aide -y
+- name: Reinstall AIDE
+  shell: | 
+    cp /etc/aide.conf /etc/aide.conf.ORIG 
+    cd /var/lib/aide/ && rm -rf *
+    dnf remove aide -y
+    dnf install aide -y 
 
 - name: Copy scripts directory
   copy: src=scripts/  dest=/root/scripts/ mode=0600
