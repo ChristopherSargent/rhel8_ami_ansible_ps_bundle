@@ -79,6 +79,9 @@
 - name: Copy scripts directory
   copy: src=scripts/  dest=/root/scripts/ mode=0600
 
+- name: Set authselect
+  shell: authselect select sssd --force
+
 - name: Run run_scripts.sh
   shell: |
     chmod +x /root/scripts/run_scripts.sh

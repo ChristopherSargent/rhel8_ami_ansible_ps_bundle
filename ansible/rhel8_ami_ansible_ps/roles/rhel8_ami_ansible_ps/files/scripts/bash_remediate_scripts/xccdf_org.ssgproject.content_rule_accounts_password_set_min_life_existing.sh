@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 set -e
 
 var_accounts_minimum_age_login_defs='1'
