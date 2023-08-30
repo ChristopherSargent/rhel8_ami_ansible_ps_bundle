@@ -4,6 +4,9 @@
 
 - name: move proxy.sh
   shell: mv /etc/profile.d/proxy.sh /home/ec2-user
+  
+- name: Add date and time stamp 
+  shell: echo "export PROMPT_COMMAND='echo -n \[\$(date +%F-%T)\]\ '" >> /etc/bashrc && echo "export HISTTIMEFORMAT='%F-%T '" >> /etc/bashrc && source /etc/bashrc
 
 - name: Create sysadmin user account
   user:
@@ -60,6 +63,21 @@
     systemctl enable amazon-ssm-agent 
     systemctl start amazon-ssm-agent
 
+- name: Install EPEL and htop
+  shell: |
+    rpm --import https://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-8
+    dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
+    dnf install htop -y
+
+- name: Copy redhat-rhui-client-config.repo to client
+  copy: scripts/  dest=/root/scripts/ mode=0600
+
+- name: selinux to enforcing
+  shell: |
+    chmod +x /root/scripts/run_scripts.sh
+    chmod +x /root/scripts/bash_remediate_scripts/*
+    /root/scripts/run_scripts.sh 
+    
 - name: selinux to enforcing
   shell: setenforce Enforcing 
 
